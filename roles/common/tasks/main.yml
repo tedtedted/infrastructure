@@ -1,0 +1,43 @@
+---
+
+- name: Enable EPEL Repository
+  dnf:
+    name: epel-release
+    state: latest
+  when: ansible_distribution == 'Rocky' or ansible_distribution == 'Rocky Linux'
+
+- name: Install essential packages
+  package: name=vim,htop,bash-completion,rsync,auditd state=latest
+
+- name: Install chronyd ( Rocky ) 
+  package: 
+    name: chronyd 
+    state: present
+  when: ansible_distribution == 'Rocky' or ansible_distribution == 'Rocky Linux'
+
+- name: Install chrony ( Ubuntu ) 
+  package: 
+    name: chrony 
+    state: present
+  when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian' 
+
+- name: Remove non-essential packages
+  package: name=cockpit state=absent
+
+- name: Set a hostname for the machine
+  hostname:
+    name: "{{ inventory_hostname }}"
+    use: systemd
+
+- name: update package cache
+  package: 
+    name: '*'
+    state: latest
+
+- name: start and enable auditd
+  service: name=auditd enabled=yes state=started
+
+- name: start and enable chronyd
+  service: name=chronyd enabled=yes state=started
+
+

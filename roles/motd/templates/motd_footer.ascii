@@ -1,0 +1,7 @@
+  ▓▓▓▓▓▓▓▓▓▓
+ ░▓ fqdn   ▓ {{ ansible_fqdn }}
+ ░▓ os     ▓ {{ ansible_distribution}}
+ ░▓ ip     ▓ {{ ansible_default_ipv4 }}
+ ░▓▓▓▓▓▓▓▓▓▓
+ ░░░░░░░░░░
+

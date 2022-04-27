@@ -1,0 +1,6 @@
+---
+# handlers file for hardening
+
+- name: apply sysctl settings
+  command: sysctl --system
+

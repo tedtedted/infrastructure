@@ -1,0 +1,33 @@
+---
+
+- name: change to default port, user for this one task
+  set_fact:
+    ansible_port: 22
+    ansible_user: root
+
+- name: create backup of sshd_config file
+  copy:
+    src: "/etc/ssh/sshd_config"
+    remote_src: yes
+    dest: "/etc/ssh/sshd_config.backup"
+    owner: root
+    group: root
+    mode: 0600
+    force: no
+
+- name: set alternative ssh port in sshd_config file
+  lineinfile:
+    dest: "/etc/ssh/sshd_config"
+    regexp: "^#Port"
+    line: "Port 2200"
+
+- name: confirm new SSH port to SELinux
+  seport:
+    ports: 2200
+    proto: tcp
+    setype: ssh_port_t
+    state: present
+  ignore_errors: yes
+
+- name: restart sshd
+  service: name=sshd state=restarted enabled=yes

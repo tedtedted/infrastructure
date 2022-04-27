@@ -1,0 +1,11 @@
+---
+
+- name: generate custom figlet for hostname locally
+  become_user: ted
+  connection: local
+  local_action: command figlet -f 3d {{ ansible_hostname}}
+  register: motd_output
+
+- name: copy generated motd to templates directory
+  become_user: ted
+  local_action: copy content={{ motd_output.stdout_lines|to_nice_yaml()|regex_replace('-', '')|regex_replace("'","") }} dest=~/Projects/infrastructure/roles/motd/templates/motd_header.ascii

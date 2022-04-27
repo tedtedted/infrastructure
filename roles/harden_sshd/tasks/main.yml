@@ -1,0 +1,65 @@
+---
+
+- name: Set SSH KexAlgorithms
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    state: present
+    line: 'KexAlgorithms curve25519-sha256@libssh.org,ecdh-sha2-nistp521,ecdh-sha2-nistp384,ecdh-sha2-nistp256,diffie-hellman-group-exchange-sha256'
+
+- name: Set SSH Ciphers
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    state: present
+    line: 'Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr'
+
+- name: Set SSH MACs
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    state: present
+    line: 'MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com,hmac-sha2-512,hmac-sha2-256,umac-128@openssh.com'
+
+- name: Only allow ed25519 as an SSH key type
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^#PubkeyAcceptedKeyTypes"
+    line: "PubkeyAcceptedKeyTypes ssh-ed25519-cert-v01@openssh.com,ssh-ed25519"
+
+- name: Set SSH loglevel to verbose
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^#LogLevel INFO'
+    line: 'LogLevel VERBOSE'
+
+- name: Disable SSH root login
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^PermitRootLogin'
+    line: 'PermitRootLogin no'
+
+- name: Disable SSH password authentication
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^PasswordAuthentication yes'
+    line: 'PasswordAuthentication no'
+
+- name: Disable X11 Forwarding
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^X11Forwarding"
+    line: "X11Forwarding no"
+
+- name: Set SSH AuthenticationMethods
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    state: present
+    line: 'AuthenticationMethods publickey'
+
+- name: Disable SSH short modulis for DH
+  shell: |-
+    awk '$5 >= 3071' /etc/ssh/moduli > /tmp/moduli &&
+    mv /tmp/moduli /etc/ssh/moduli
+
+- name: Restart SSHd
+  service:
+    name: sshd
+    state: restarted

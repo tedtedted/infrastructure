@@ -1,0 +1,39 @@
+---
+# tasks file for users
+
+- name: set root users ( for last time ) 
+  set_fact: 
+    ansible_user: root
+
+- name: Create ted user 
+  user:
+    name: ted
+    password: "$y$j9T$IOglIzhU8zmeAwcjL.hqN/$P1.PCeve2mC9jlpGVQ5Y6DQFIXwXKhsupjKQwoXuXW8"
+    shell: /bin/bash
+    createhome: yes
+
+- name: Add authorized key for ted
+  ansible.posix.authorized_key:
+    user: ted
+    state: present
+    key: "{{ lookup('file', '/home/ted/.ssh/id_ed25519.pub') }}"
+
+- name: create ansible user
+  user:
+    name: ansible
+    shell: /bin/bash
+
+- name: configure ansible for passwordless sudo
+  copy:
+    content: "ansible ALL=(ALL:ALL) NOPASSWD:ALL"
+    dest: /etc/sudoers.d/wheel_nopasswd
+    mode: 0440
+    validate: '/usr/sbin/visudo -cf %s'
+
+- name: Add authorized key for ansible
+  ansible.posix.authorized_key:
+    user: ansible
+    state: present
+    key: "{{ lookup('file', '/home/ted/.ssh/ansible.pub') }}"
+
+
