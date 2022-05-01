@@ -1,9 +1,10 @@
 [all]
-hetz-fsn01.tedredington.com ansible_ssh_host=168.119.156.106
+hetz-fsn01.tedredington.com ansible_ssh_host=168.119.156.106 ansible_port=2200
+hetz-hel01.tedredington.com ansible_ssh_host=65.108.244.52 ansible_port=22
 
 [hetzner]
-hetz-fsn01.tedredington.com ansible_ssh_host=168.119.156.106
+hetz-fsn01.tedredington.com ansible_ssh_host=168.119.156.106 ansible_port=2200
 
 [all:vars]
-ansible_port=2200
+ansible_port=22
 ansible_user=ansible

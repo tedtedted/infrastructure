@@ -5,6 +5,5 @@
   gather_facts: no
   become: yes
   roles:
-    - role: bootstrap_sshd
     - role: users
-    - role: harden_sshd
+    - role: sshd

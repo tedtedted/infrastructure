@@ -7,19 +7,7 @@
   when: ansible_distribution == 'Rocky' or ansible_distribution == 'Rocky Linux'
 
 - name: Install essential packages
-  package: name=vim,htop,bash-completion,rsync,auditd state=latest
-
-- name: Install chronyd ( Rocky ) 
-  package: 
-    name: chronyd 
-    state: present
-  when: ansible_distribution == 'Rocky' or ansible_distribution == 'Rocky Linux'
-
-- name: Install chrony ( Ubuntu ) 
-  package: 
-    name: chrony 
-    state: present
-  when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian' 
+  package: name=vim,htop,bash-completion,rsync,audit,chrony state=latest
 
 - name: Remove non-essential packages
   package: name=cockpit state=absent
@@ -40,4 +28,7 @@
 - name: start and enable chronyd
   service: name=chronyd enabled=yes state=started
 
-
+- name: start enforcing SELinux
+  selinux:
+    policy: targeted
+    state: enforcing

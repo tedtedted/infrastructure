@@ -1,5 +1,22 @@
 ---
 
+- name: check if sshd_config.backup exists
+  become: true
+  stat:
+    path: /etc/ssh/sshd_config.backup
+  register: sshd_config_backup
+
+- name: create backup of sshd_config if not present
+  copy:
+    src: "/etc/ssh/sshd_config"
+    remote_src: yes
+    dest: "/etc/ssh/sshd_config.backup"
+    owner: root
+    group: root
+    mode: 0600
+    force: no
+  when: sshd_config_backup.stat.exists == False
+
 - name: Set SSH KexAlgorithms
   lineinfile:
     path: /etc/ssh/sshd_config

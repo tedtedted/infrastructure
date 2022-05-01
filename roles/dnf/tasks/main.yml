@@ -1,0 +1,28 @@
+---
+# tasks file for dnf
+
+- name: check if dnf.conf backup exists
+  become: true
+  stat:
+    path: /etc/dnf/dnf.conf.backup
+  register: dnf_conf_backup
+
+- name: copy backup of dnf.conf if not present
+  copy:
+    src: "/etc/dnf/dnf.conf"
+    remote_src: yes
+    dest: "/etc/dnf/dnf.conf.backup"
+    owner: root
+    group: root
+    mode: 0644
+    force: no
+  when: dnf_conf_backup.stat.exists == False
+
+- name: update dnf.conf for improved performance
+  copy: src={{ item }} dest=/etc/dnf/{{ item }} owner=root group=root mode=0644
+  with_items:
+    - dnf.conf
+
+- name: perform `dnf clean` to update repos
+  command: dnf clean all
+
